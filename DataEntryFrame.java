@@ -114,7 +114,7 @@ public class DataEntryFrame extends JFrame
 		phone.setText(data.getPhone());
 		email.setText(data.getEmail());
 		address.setText(data.getAddress());
-		spanel.setSignature(data.getSignature());
+		//spanel.setSignature(data.getSignature());
 		
 	}
 
@@ -140,6 +140,7 @@ public class DataEntryFrame extends JFrame
 		formSelect.addActionListener((e) -> {
 			int select = formSelect.getSelectedIndex();
 			this.setVisuals(datalist.get(select));
+			this.spanel.setSignature(datalist.get(select).getSignature());
 		});
 		this.add(formSelect);
 
@@ -212,12 +213,25 @@ public class DataEntryFrame extends JFrame
 
 			// TODO: use the JTextFields and the signature panel to set the values
 			// of the selected FormData object.
-			FormData  d = new FormData();
-			datalist.add(select, d);
-			d = datalist.get(select);
+			//FormData  d = new FormData();
+			//datalist.add(select, d);
+			//d = datalist.get(select);
 			
-			datalist.get(select).setValues(firstName.getText(), middleInitial.getText().charAt(0), lastName.getText()
-					, displayName.getText(), SSN.getText(), phone.getText(), email.getText(), address.getText(), spanel.getSignature());
+			if(!datalist.get(select).setValues(firstName.getText(), middleInitial.getText().charAt(0), lastName.getText()
+					, displayName.getText(), SSN.getText(), phone.getText(), email.getText(), address.getText(), spanel.getSignature()))
+			{
+				errorField.setText("ERROR. VALUE SET HAS FAILED");
+				spanel.setSignature(datalist.get(select).getSignature());
+				spanel.repaint();
+				
+			}
+			else
+			{
+				errorField.getText();
+			}
+			
+			//datalist.get(select).setValues(firstName.getText(), middleInitial.getText().charAt(0), lastName.getText()
+					//, displayName.getText(), SSN.getText(), phone.getText(), email.getText(), address.getText(), spanel.getSignature());
 			
 
 			this.setVisuals(datalist.get(select));
@@ -225,16 +239,6 @@ public class DataEntryFrame extends JFrame
 			formSelect.setModel(newComboBoxModel);
 			formSelect.setSelectedIndex(select);
 
-			// TODO: display an error message if setting the values failed. Else, display a success message.w
-			if(!datalist.get(select).setValues(firstName.getText(), middleInitial.getText().charAt(0), lastName.getText()
-					, displayName.getText(), SSN.getText(), phone.getText(), email.getText(), address.getText(), spanel.getSignature()))
-			{
-				errorField.setText("ERROR. VALUE SET HAS FAILED");
-			}
-			else
-			{
-				errorField.getText();
-			}
 		});
 
 		JButton resetForm = new JButton("Reset");
@@ -243,6 +247,7 @@ public class DataEntryFrame extends JFrame
 			// TODO: reset the values on the selected form data
 
 			datalist.get(select).reset();	
+			//formHandling.repaint();
 			this.setVisuals(datalist.get(select));
 			
 				
@@ -308,6 +313,7 @@ public class DataEntryFrame extends JFrame
 					classError.printStackTrace();
 				}
 				
+				
 			}
 			
             ;
@@ -321,7 +327,7 @@ public class DataEntryFrame extends JFrame
 			// TODO: display error message on fail, else display success message
 			JFileChooser fileToChoose = new JFileChooser();
 			File filePicked = new File("");
-			int value = fileToChoose.showOpenDialog(this);
+			int value = fileToChoose.showSaveDialog(this);
 			
 			if(value == JFileChooser.APPROVE_OPTION)
 			{
