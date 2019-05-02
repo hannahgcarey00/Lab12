@@ -1,13 +1,20 @@
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -202,6 +209,13 @@ public class DataEntryFrame extends JFrame
 
 			// TODO: use the JTextFields and the signature panel to set the values
 			// of the selected FormData object.
+			FormData  d = new FormData();
+			datalist.add(select, d);
+			d = datalist.get(select);
+			
+			datalist.get(select).setValues(firstName.getText(), middleInitial.getText().charAt(0), lastName.getText()
+					, displayName.getText(), SSN.getText(), phone.getText(), email.getText(), address.getText(), spanel.getSignature());
+			
 
 			this.setVisuals(datalist.get(select));
 			DefaultComboBoxModel<String> newComboBoxModel = getComboBoxModel(datalist);
@@ -209,22 +223,44 @@ public class DataEntryFrame extends JFrame
 			formSelect.setSelectedIndex(select);
 
 			// TODO: display an error message if setting the values failed. Else, display a success message.w
+			if(!datalist.get(select).setValues(firstName.getText(), middleInitial.getText().charAt(0), lastName.getText()
+					, displayName.getText(), SSN.getText(), phone.getText(), email.getText(), address.getText(), spanel.getSignature()))
+			{
+				errorField.setText("ERROR. VALUE SET HAS FAILED");
+			}
+			else
+			{
+				errorField.getText();
+			}
 		});
 
 		JButton resetForm = new JButton("Reset");
 		resetForm.addActionListener((e) -> {
 			int select = formSelect.getSelectedIndex();
 			// TODO: reset the values on the selected form data
+
+			datalist.get(select).reset();	
 			this.setVisuals(datalist.get(select));
+			
+				
 		});
 
 		// TODO: add buttons to panel and add to frame
+		formHandling.add(createForm);
+		formHandling.add(saveForm);
+		formHandling.add(resetForm);
+		this.add(formHandling);
+		
 
 		// Add in the error message field:
 		this.errorField.setEditable(false);
+		
 		// TODO: add error field to frame
-
+		this.add(errorField);
+		
 		// Add in the import/export panel:
+		
+		JPanel importantButtons = new JPanel(new GridLayout(0,2));
 		JButton importButton = new JButton("Import");
 
 		// TODO: Import from a file: you will import a list of FormData objects and should use this to replace
@@ -232,19 +268,45 @@ public class DataEntryFrame extends JFrame
 		importButton.addActionListener((e) -> {
 
 			// TODO: Choose a file (hint, use JFileChooser):
+			JFileChooser fileToChoose = new JFileChooser();
+			File filePicked = new File("");
+			int value = fileToChoose.showOpenDialog(this);
+			
+			if(value == JFileChooser.APPROVE_OPTION)
+			{
+				filePicked = fileToChoose.getSelectedFile();
+				FileInputStream fileInputS = null;
+				
+				try 
+				{
+					fileInputS = new FileInputStream(filePicked);
+					ObjectInputStream inputStream = new ObjectInputStream(fileInputS);
+					datalist = (ArrayList<FormData>)inputStream.readObject();
+					
+					int select = 0;
+					DefaultComboBoxModel<String> newComboBoxModel = getComboBoxModel(datalist);
+					formSelect.setModel(newComboBoxModel);
+					formSelect.setSelectedIndex(select);
+					this.setVisuals(datalist.get(select));
+				}
+				catch(IOException error)
+				{
+					
+				}
+				catch(FileNotFound)
+			}
+			
+			
+			
 			// TODO: extract object from a file (hint, use file.getAbsolutePath()):
 			//		 You will use the file to replace the datalist object. I.e. you will be loading in a new
 			//		 list of formdata.
 			// TODO: display error message on fail, else display success message
 
         	// Use this code snippet to reset visuals after importing:
-			/*
-            int select = 0;
-			DefaultComboBoxModel<String> newComboBoxModel = getComboBoxModel(datalist);
-			formSelect.setModel(newComboBoxModel);
-			formSelect.setSelectedIndex(select);
-			this.setVisuals(datalist.get(select));
-			*/
+			
+            ;
+			
 		});
 		JButton exportButton = new JButton("Export");
 		exportButton.addActionListener((e) -> {
