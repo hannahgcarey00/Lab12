@@ -263,7 +263,7 @@ public class DataEntryFrame extends JFrame
 		
 		// Add in the import/export panel:
 		
-		JPanel importantButtons = new JPanel(new GridLayout(0,2));
+		JPanel extraButtons = new JPanel(new GridLayout(0,2));
 		JButton importButton = new JButton("Import");
 
 		// TODO: Import from a file: you will import a list of FormData objects and should use this to replace
@@ -356,10 +356,10 @@ public class DataEntryFrame extends JFrame
 
 		// TODO: add import/export to panel and add to frame
 		
-		importantButtons.add(importButton);
-		importantButtons.add(exportButton);
+		extraButtons.add(importButton);
+		extraButtons.add(exportButton);
 		
-		this.add(importantButtons);
+		this.add(extraButtons);
 		
 
 		// JFrame basics:
