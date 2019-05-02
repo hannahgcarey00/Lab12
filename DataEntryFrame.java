@@ -6,8 +6,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -289,21 +292,23 @@ public class DataEntryFrame extends JFrame
 					formSelect.setSelectedIndex(select);
 					this.setVisuals(datalist.get(select));
 				}
+				catch(FileNotFoundException fileError)
+				{
+					errorField.setText("File was not found");
+					fileError.printStackTrace();
+				}
 				catch(IOException error)
 				{
-					
+					errorField.setText("IOException was thrown");
+					error.printStackTrace();
 				}
-				catch(FileNotFound)
+				catch(ClassNotFoundException classError)
+				{
+					errorField.setText("Class was not found");
+					classError.printStackTrace();
+				}
+				
 			}
-			
-			
-			
-			// TODO: extract object from a file (hint, use file.getAbsolutePath()):
-			//		 You will use the file to replace the datalist object. I.e. you will be loading in a new
-			//		 list of formdata.
-			// TODO: display error message on fail, else display success message
-
-        	// Use this code snippet to reset visuals after importing:
 			
             ;
 			
@@ -314,9 +319,48 @@ public class DataEntryFrame extends JFrame
 			// TODO: Choose a file (hint, use JFileChooser):
 			// TODO: export datalist from a file (hint, use file.getAbsolutePath()):
 			// TODO: display error message on fail, else display success message
+			JFileChooser fileToChoose = new JFileChooser();
+			File filePicked = new File("");
+			int value = fileToChoose.showOpenDialog(this);
+			
+			if(value == JFileChooser.APPROVE_OPTION)
+			{
+				filePicked = fileToChoose.getSelectedFile();
+				FileOutputStream fileInputS = null;
+				
+				try 
+				{
+					fileInputS = new FileOutputStream(filePicked);
+					ObjectOutputStream outputStream = new ObjectOutputStream(fileInputS);
+					outputStream.writeObject(datalist);
+					
+					int select = 0;
+					DefaultComboBoxModel<String> newComboBoxModel = getComboBoxModel(datalist);
+					formSelect.setModel(newComboBoxModel);
+					formSelect.setSelectedIndex(select);
+					this.setVisuals(datalist.get(select));
+				}
+				catch(FileNotFoundException fileError)
+				{
+					errorField.setText("File was not found");
+					fileError.printStackTrace();
+				}
+				catch(IOException error)
+				{
+					errorField.setText("IOException was thrown");
+					error.printStackTrace();
+				}
+				
+			}
 		});
 
 		// TODO: add import/export to panel and add to frame
+		
+		importantButtons.add(importButton);
+		importantButtons.add(exportButton);
+		
+		this.add(importantButtons);
+		
 
 		// JFrame basics:
 		this.setTitle("Example Form Fillout");
